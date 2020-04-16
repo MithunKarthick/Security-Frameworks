@@ -1,3 +1,6 @@
+// Experimenting with JWT //
+
+
 const express = require("express");
 const jwt = require("jsonwebtoken");
 const bodyParser = require("body-parser");
@@ -45,7 +48,7 @@ app.get("/api/protected2", (req, res) => { //will be called after verification m
 app.post("/login", (req, res) => {
     // const userData = { user: "myth", pass: "pass@123" } //mock data to test using postman
     
-    //after db validation for user/pass is success the below should be executed
+    //after db validation for user/pass is success the below should be executed (failure case shouil redirect for valid user details)
     const userData = req.body.user; //user name is taken as main data here (normally this should have all required details to use webapp)
     const token = jwt.sign(userData, "secret"); //siging the token
     res.cookie("myth", token, { path: "/", httpOnly: true, signed: false}); //setting the token in cookie (client can use either cookie or header)
@@ -72,8 +75,6 @@ app.listen(3000, () => {
 
 //middleware to verify token
 function verifyToken(req, res, next) {
-    console.log(req.url);
-    
     if (req.headers.cookie !== undefined) {
         const cookie = req.headers.cookie.replace("myth=",""); //removing name to get exact token
         req.userData = jwt.verify(cookie, "secret");     //adding decrypted data to req object which will be used further
